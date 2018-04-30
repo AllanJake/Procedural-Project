@@ -29,7 +29,10 @@ const float SCREEN_NEAR = 0.1f;
 #include "textclass.h"
 #include "terrainshaderclass.h"
 #include "lightclass.h"
-
+#include "CubeClass.h"
+#include "TextureShaderClass.h"
+#include "RenderTextureClass.h"
+#include "DebugWindowClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ApplicationClass
@@ -48,6 +51,8 @@ public:
 private:
 	bool HandleInput(float);
 	bool RenderGraphics();
+	bool RenderToTexture();
+	bool RenderScene();
 
 private:
 	InputClass* m_Input;
@@ -65,6 +70,10 @@ private:
 	TextureClass* grassTexture;
 	TextureClass* slopeTexture;
 	TextureClass* rockTexture;
+	CubeClass* cube;
+	TextureShaderClass* textureShader;
+	RenderTextureClass* m_RenderTexture;
+	DebugWindowClass* m_debugWindow;
 };
 
 #endif

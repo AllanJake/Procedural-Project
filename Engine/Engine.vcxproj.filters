@@ -69,6 +69,18 @@
     <ClCompile Include="PerlinNoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CubeClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTextureClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugWindowClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationclass.h">
@@ -122,6 +134,18 @@
     <ClInclude Include="PerlinNoise.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CubeClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTextureClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugWindowClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="terrain.vs">
@@ -134,6 +158,12 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="terrain.ps">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="texture.ps">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="texture.vs">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

@@ -83,7 +83,9 @@
     <ClCompile Include="applicationclass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
+    <ClCompile Include="CubeClass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
+    <ClCompile Include="DebugWindowClass.cpp" />
     <ClCompile Include="fontclass.cpp" />
     <ClCompile Include="fontshaderclass.cpp" />
     <ClCompile Include="fpsclass.cpp" />
@@ -92,18 +94,22 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="positionclass.cpp" />
+    <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="terrainclass.cpp" />
     <ClCompile Include="terrainshaderclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
+    <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="timerclass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationclass.h" />
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="cpuclass.h" />
+    <ClInclude Include="CubeClass.h" />
     <ClInclude Include="d3dclass.h" />
+    <ClInclude Include="DebugWindowClass.h" />
     <ClInclude Include="fontclass.h" />
     <ClInclude Include="fontshaderclass.h" />
     <ClInclude Include="fpsclass.h" />
@@ -111,11 +117,13 @@
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="positionclass.h" />
+    <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="terrainclass.h" />
     <ClInclude Include="terrainshaderclass.h" />
     <ClInclude Include="textclass.h" />
     <ClInclude Include="textureclass.h" />
+    <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="timerclass.h" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +131,8 @@
     <None Include="font.vs" />
     <None Include="terrain.ps" />
     <None Include="terrain.vs" />
+    <None Include="texture.ps" />
+    <None Include="texture.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
