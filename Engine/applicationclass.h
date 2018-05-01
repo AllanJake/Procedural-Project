@@ -33,6 +33,9 @@ const float SCREEN_NEAR = 0.1f;
 #include "TextureShaderClass.h"
 #include "RenderTextureClass.h"
 #include "DebugWindowClass.h"
+#include "OrthoWindowClass.h"
+#include "VerticalBlurShaderClass.h"
+#include "HorizontalBlurShaderClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ApplicationClass
@@ -53,6 +56,12 @@ private:
 	bool RenderGraphics();
 	bool RenderToTexture();
 	bool RenderScene();
+	bool RenderSceneToTexture();
+	bool DownSampleTexture();
+	bool RenderHorizontalBlurToTexture();
+	bool RenderVerticalBlurToTexture();
+	bool UpSampleTexture();
+	bool Render2DTextureScene();
 
 private:
 	InputClass* m_Input;
@@ -74,6 +83,11 @@ private:
 	TextureShaderClass* textureShader;
 	RenderTextureClass* m_RenderTexture;
 	DebugWindowClass* m_debugWindow;
+
+	HorizontalBlurShaderClass* m_horBlurShader;
+	VerticalBlurShaderClass* m_verBlurShader;
+	RenderTextureClass *m_RenderTex, *m_DownSampleTex, *m_HorBlurTex, *m_VerBlurTex, *m_UpSampleTex;
+	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
 };
 
 #endif

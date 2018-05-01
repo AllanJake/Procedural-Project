@@ -81,6 +81,15 @@
     <ClCompile Include="DebugWindowClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HorizontalBlurShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VerticalBlurShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OrthoWindowClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationclass.h">
@@ -146,6 +155,15 @@
     <ClInclude Include="DebugWindowClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HorizontalBlurShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VerticalBlurShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OrthoWindowClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="terrain.vs">
@@ -164,6 +182,18 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="texture.vs">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="HorizontalBlur.ps">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="HorizontalBlur.vs">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="VerticalBlur.ps">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="VerticalBlur.vs">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

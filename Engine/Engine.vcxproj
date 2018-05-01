@@ -89,9 +89,11 @@
     <ClCompile Include="fontclass.cpp" />
     <ClCompile Include="fontshaderclass.cpp" />
     <ClCompile Include="fpsclass.cpp" />
+    <ClCompile Include="HorizontalBlurShaderClass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OrthoWindowClass.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
@@ -102,6 +104,7 @@
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="timerclass.cpp" />
+    <ClCompile Include="VerticalBlurShaderClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationclass.h" />
@@ -113,8 +116,10 @@
     <ClInclude Include="fontclass.h" />
     <ClInclude Include="fontshaderclass.h" />
     <ClInclude Include="fpsclass.h" />
+    <ClInclude Include="HorizontalBlurShaderClass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
+    <ClInclude Include="OrthoWindowClass.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="RenderTextureClass.h" />
@@ -125,14 +130,19 @@
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="timerclass.h" />
+    <ClInclude Include="VerticalBlurShaderClass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="font.ps" />
     <None Include="font.vs" />
+    <None Include="HorizontalBlur.ps" />
+    <None Include="HorizontalBlur.vs" />
     <None Include="terrain.ps" />
     <None Include="terrain.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
+    <None Include="VerticalBlur.ps" />
+    <None Include="VerticalBlur.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
