@@ -13,6 +13,22 @@ CameraClass::CameraClass()
 	m_rotationX = 0.0f;
 	m_rotationY = 0.0f;
 	m_rotationZ = 0.0f;
+
+	// Generate the ortho view matrix
+	D3DXVECTOR3 up, position, lookAt;
+	up.x = 0.0f;
+	up.y = 1.0f;
+	up.z = 0.0f;
+
+	position.x = m_positionX;
+	position.y = m_positionY;
+	position.z = m_positionZ;
+
+	lookAt.x = 0.0f;
+	lookAt.y = 0.0f;
+	lookAt.z = 1.0f;
+
+	D3DXMatrixLookAtLH(&m_orthoViewMatrix, &position, &lookAt, &up);
 }
 
 
@@ -103,5 +119,11 @@ void CameraClass::Render()
 void CameraClass::GetViewMatrix(D3DXMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
+	return;
+}
+
+void CameraClass::GetOrthoViewMatrix(D3DXMATRIX& orthoViewMatrix)
+{
+	orthoViewMatrix = m_orthoViewMatrix;
 	return;
 }

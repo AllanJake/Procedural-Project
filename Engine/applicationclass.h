@@ -54,7 +54,6 @@ public:
 private:
 	bool HandleInput(float);
 	bool RenderGraphics();
-	bool RenderToTexture();
 	bool RenderScene();
 	bool RenderSceneToTexture();
 	bool DownSampleTexture();
@@ -62,6 +61,7 @@ private:
 	bool RenderVerticalBlurToTexture();
 	bool UpSampleTexture();
 	bool Render2DTextureScene();
+	void ToggleBlur(bool);
 
 private:
 	InputClass* m_Input;
@@ -88,6 +88,8 @@ private:
 	VerticalBlurShaderClass* m_verBlurShader;
 	RenderTextureClass *m_RenderTex, *m_DownSampleTex, *m_HorBlurTex, *m_VerBlurTex, *m_UpSampleTex;
 	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
+
+	bool isBlur;
 };
 
 #endif

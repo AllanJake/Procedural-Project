@@ -29,11 +29,12 @@ public:
 
 	void Render();
 	void GetViewMatrix(D3DXMATRIX&);
+	void GetOrthoViewMatrix(D3DXMATRIX&);
 
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
-	D3DXMATRIX m_viewMatrix;
+	D3DXMATRIX m_viewMatrix, m_orthoViewMatrix;
 };
 
 #endif

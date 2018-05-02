@@ -15,8 +15,8 @@ public:
 	bool Initialize(ID3D11Device*, int, int, float, float);
 	void Shutdown();
 
-	void SetRenderTarget(ID3D11DeviceContext*, ID3D11DepthStencilView*);
-	void ClearRenderTarget(ID3D11DeviceContext*, ID3D11DepthStencilView*, float, float, float, float);
+	void SetRenderTarget(ID3D11DeviceContext*);
+	void ClearRenderTarget(ID3D11DeviceContext*, float, float, float, float);
 	ID3D11ShaderResourceView* GetShaderResourceView();
 
 	void GetOrthoMatrix(D3DXMATRIX&);
@@ -29,6 +29,8 @@ private:
 	ID3D11ShaderResourceView* m_shaderResourceView;
 	D3DXMATRIX m_orthoMatrix;
 	int texWidth, texHeight;
+	ID3D11DepthStencilView* m_depthStencilView;
+	ID3D11Texture2D* m_depthStencilBuffer;
 };
 
 #endif // !RENDERTEXTURECLASS_H
