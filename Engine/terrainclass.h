@@ -52,9 +52,12 @@ public:
 	bool InitializeTerrain(ID3D11Device*, int terrainWidth, int terrainHeigt, WCHAR*, WCHAR*, WCHAR*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
-	bool GenerateWater(ID3D11Device* device, float frameTime);
+	bool ResetTerrain(ID3D11Device*, bool keystroke);
+	bool GenerateTerrain(ID3D11Device*, bool keystroke);
+	bool FaultLine(ID3D11Device* device, bool keystroke);
 	bool GeneratePerlinTerrain(ID3D11Device* device, bool keystroke);
 	bool SmoothTerrain(ID3D11Device* device, bool keydown);
+	bool DiamondSquareAlgorithm(ID3D11Device* device, bool keystroke, float cornerHeight, float randRange, float heightScalar);
 	int  GetIndexCount();
 
 	ID3D11ShaderResourceView* GetGrassTexture();
@@ -75,16 +78,20 @@ private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
+
+	float RandomRange(float, float);
+	float GetSquareAverage(std::vector<float> &vector, int i, int j, int step, float randRange, float smoothingVal);
 	
 private:
 	bool m_terrainGeneratedToggle;
 	bool m_terrainSmoothToggle;
+	bool m_terrainResetToggle;
 	int m_terrainWidth, m_terrainHeight;
 	int m_vertexCount, m_indexCount;
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	HeightMapType* m_heightMap;
 	TextureClass *m_grassTexture, *m_slopeTexture, *m_rockTexture;
-	
+	int PerlinSeed;
 };
 
 #endif

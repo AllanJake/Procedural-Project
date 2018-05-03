@@ -53,6 +53,7 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	int videoMemory;
 	int downSampleWidth, downSampleHeight;
 	isBlur = false;
+	
 
 	// Set down sample size
 	downSampleWidth = screenWidth / 2;
@@ -637,7 +638,6 @@ bool ApplicationClass::Frame()
 	return result;
 }
 
-
 bool ApplicationClass::HandleInput(float frameTime)
 {
 	bool keyDown, result;
@@ -649,7 +649,13 @@ bool ApplicationClass::HandleInput(float frameTime)
 
 	// Handle the input.
 	keyDown = m_Input->IsSpacePressed();
-	m_Terrain->GeneratePerlinTerrain(m_Direct3D->GetDevice(), keyDown);	
+	m_Terrain->GenerateTerrain(m_Direct3D->GetDevice(), keyDown);
+
+	keyDown = m_Input->IsTPressed();
+	m_Terrain->ResetTerrain(m_Direct3D->GetDevice(), keyDown);
+
+	keyDown = m_Input->IsKPressed();
+	m_Terrain->FaultLine(m_Direct3D->GetDevice(), keyDown);	
 
 	keyDown = m_Input->IsGPressed();
 	m_Terrain->SmoothTerrain(m_Direct3D->GetDevice(), keyDown);
@@ -681,6 +687,12 @@ bool ApplicationClass::HandleInput(float frameTime)
 	keyDown = m_Input->IsBPressed();
 	ToggleBlur(keyDown);
 	
+	keyDown = m_Input->IsHPressed();
+	m_Terrain->DiamondSquareAlgorithm(m_Direct3D->GetDevice(), keyDown, 10.0f, 10.0f, 20.0f);
+
+	keyDown = m_Input->IsJPressed();
+	m_Terrain->GeneratePerlinTerrain(m_Direct3D->GetDevice(), keyDown);
+
 	// Get the view point position/rotation.
 	m_Position->GetPosition(posX, posY, posZ);
 	m_Position->GetRotation(rotX, rotY, rotZ);

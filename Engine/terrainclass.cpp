@@ -12,6 +12,7 @@ TerrainClass::TerrainClass()
 	m_heightMap = 0;
 	m_terrainGeneratedToggle = false;
 	m_terrainSmoothToggle = false;
+	m_terrainResetToggle = false;
 	m_grassTexture = 0;
 	m_slopeTexture = 0;
 	m_rockTexture = 0;
@@ -32,7 +33,7 @@ bool TerrainClass::InitializeTerrain(ID3D11Device* device, int terrainWidth, int
 	int index;
 	float height = 0.0;
 	bool result;
-
+	PerlinSeed = rand() % 100;
 	// Save the dimensions of the terrain.
 	m_terrainWidth = terrainWidth;
 	m_terrainHeight = terrainHeight;
@@ -161,32 +162,257 @@ ID3D11ShaderResourceView* TerrainClass::GetRockTexture()
 	return m_rockTexture->GetTexture();
 }
 
-bool TerrainClass::GenerateWater(ID3D11Device* device, float frameTime)
+bool TerrainClass::ResetTerrain(ID3D11Device* device, bool keystroke)
 {
-	int index;
+	if (keystroke && (!m_terrainResetToggle))
+	{
+		int index;
+		bool result;
+		for (int j = 0; j<m_terrainHeight; j++)
+		{
+			for (int i = 0; i < m_terrainWidth; i++)
+			{
+					index = (m_terrainHeight * j) + i;
+
+					m_heightMap[index].x = (float)i;
+					m_heightMap[index].y = 0.0f;
+					m_heightMap[index].z = (float)j;
+			}
+		}
+
+		result = CalculateNormals();
+		if (!result)
+		{
+			return false;
+		}
+
+		// Initialize the vertex and index buffer that hold the geometry for the terrain.
+		result = InitializeBuffers(device);
+		if (!result)
+		{
+			return false;
+		}
+
+		m_terrainResetToggle = true;
+	}
+	else if (!keystroke && m_terrainResetToggle)
+	{
+		m_terrainResetToggle = false;
+	}
+	return true;
+}
+
+bool TerrainClass::GenerateTerrain(ID3D11Device* device, bool keystroke)
+{
+	if (keystroke)
+	{
+		int random = rand() % 30;
+		
+		if (random < 10)
+		{
+			GeneratePerlinTerrain(device, keystroke);
+		}
+		else if ((random >= 10) && (random < 20))
+		{
+			SmoothTerrain(device, keystroke);
+		}
+		else if ((random >= 20) && (random < 27))
+		{
+			DiamondSquareAlgorithm(device, keystroke, (rand() % 10), (rand() % 15), (rand() % 20));
+		}
+		else
+		{
+			FaultLine(device, keystroke);
+		}
+		return true;
+	}
+}
+
+bool TerrainClass::FaultLine(ID3D11Device* device, bool keydown)
+{
 	bool result;
-	PerlinNoise Pn(58);
-	
 	//the toggle is just a bool that I use to make sure this is only called ONCE when you press a key
 	//until you release the key and start again. We dont want to be generating the terrain 500
 	//times per second. 
-
-	for (int j = 0; j<m_terrainHeight; j++)
+	if (keydown && (!m_terrainGeneratedToggle))
 	{
-		for (int i = 0; i<m_terrainWidth; i++)
+		int index;
+		float height = 0.0;
+		float peakHeight = RandomRange(-15, 15);
+		float newHeight = peakHeight;
+		int peakX = rand() & 86;
+		int peakY = rand() & 48;
+		float average;
+
+
+		//loop through the terrain and set the hieghts how we want. This is where we generate the terrain
+		//in this case I will run a sin-wave through the terrain in one axis.
+
+		for (int j = peakY; j < m_terrainHeight; j++)
 		{
-			index = (m_terrainHeight * j) + i;
+			for (int i = peakX; i < m_terrainWidth; i++)
+			{
+				index = (m_terrainHeight * j) + i;
 
-			m_heightMap[index].x = i;
-			//m_heightMap[index].y = Pn.noise(sin((float)i * (frameTime)), 0, 1.5);//(float)(sin((float)i * j + (frameTime * 40) / (m_terrainWidth / 12))); //magic numbers ahoy, just to ramp up the height of the sin function so its visible.
-			m_heightMap[index].y = (sin((float)i * (Pn.noise(i, j, 1.5) + (frameTime / 500))));
-			m_heightMap[index].z = (float)j;
+				/*m_heightMap[index].x = (float)i;
+				m_heightMap[index].y = (float)newHeight;
+				m_heightMap[index].z = (float)j;
+
+				if (newHeight > 0.0)
+					newHeight -= 1.0f;*/
+				//////////////////////////////////////////////////////////////////////////////////////////////
+				m_heightMap[index].x = (float)i;
+				m_heightMap[index].y = (float)newHeight;
+				m_heightMap[index].z = (float)j;
+				average = 0.0f;
+				//// Grab the average of the surrounding points
+				// (-1, -1)
+				//index = (m_terrainHeight * (j - 1) + (i - 1));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+
+				//// (0, -1)
+				//index = (m_terrainHeight * (j - 1) + i);
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (1, -1)
+				//index = (m_terrainHeight * (j - 1) + (i + 1));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (-1, 0)
+				//index = (m_terrainHeight * j + (i - 1));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (0, 0)
+				//index = (m_terrainHeight * j) + i;
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (1, 0)
+				//index = (m_terrainHeight * j + (i + 1));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (-1, 1)
+				//index = (m_terrainHeight * (j + 1) + (i - 1));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (0, 1)
+				//index = (m_terrainHeight * (j + 1) + i);
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (1, 1)
+				//index = (m_terrainHeight * (j + 1) + (i + 1));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+
+
+
+				//// (-2, -2)
+				//index = (m_terrainHeight * (j - 2) + (i - 2));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+
+				//// (0, -2)
+				//index = (m_terrainHeight * (j - 2) + i);
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (2, -2)
+				//index = (m_terrainHeight * (j - 2) + (i + 2));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (-2, 0)
+				//index = (m_terrainHeight * j + (i - 2));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (0, 0)
+				//index = (m_terrainHeight * j) + i;
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (2, 0)
+				//index = (m_terrainHeight * j + (i + 2));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (-2, 2)
+				//index = (m_terrainHeight * (j + 2) + (i - 2));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (0, 2)
+				//index = (m_terrainHeight * (j + 2) + i);
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+				//// (2, 2)
+				//index = (m_terrainHeight * (j + 2) + (i + 2));
+				//if ((index < m_terrainHeight * m_terrainWidth) && (index > 0))
+				//{
+				//	average += m_heightMap[index].y;
+				//}
+
+				//index = (m_terrainHeight * j) + i;
+
+				//average = average / 18;
+
+				//m_heightMap[index].x = (float)i;
+				//m_heightMap[index].y += average;
+				//m_heightMap[index].z = (float)j;
+			}
+				
 		}
-	}
+		//newHeight = peakHeight;
+		
 
-	result = CalculateNormals();
-	// Initialize the vertex and index buffer that hold the geometry for the terrain.
-	result = InitializeBuffers(device);
+		result = CalculateNormals();
+		if (!result)
+		{
+			return false;
+		}
+
+		// Initialize the vertex and index buffer that hold the geometry for the terrain.
+		result = InitializeBuffers(device);
+		if (!result)
+		{
+			return false;
+		}
+
+		m_terrainGeneratedToggle = true;
+	}
+	else if (!keydown && (m_terrainGeneratedToggle))
+	{
+		m_terrainGeneratedToggle = false;
+	}
+	//SmoothTerrain(device, keydown);
 	return true;
 }
 
@@ -199,8 +425,8 @@ bool TerrainClass::GeneratePerlinTerrain(ID3D11Device* device, bool keydown)
 	if (keydown && (!m_terrainGeneratedToggle))
 	{
 		int index;
-		float height = 0.0;
-		PerlinNoise Pn(58);
+		//float height = 0.0;
+		PerlinNoise Pn(PerlinSeed);
 
 
 		//loop through the terrain and set the hieghts how we want. This is where we generate the terrain
@@ -210,13 +436,13 @@ bool TerrainClass::GeneratePerlinTerrain(ID3D11Device* device, bool keydown)
 		{
 			for (int i = 0; i < m_terrainWidth; i++)
 			{
-				if (i % 2 && j % 2) {
+				if (i % 8 && j % 8) {
 					index = (m_terrainHeight * j) + i;
 
 					m_heightMap[index].x = (float)i;
 					//m_heightMap[index].y = (float)(sin((float)i / (m_terrainWidth / 12))*8.0) + (cos((float)j / (m_terrainWidth / 15)) * 5.0f); //magic numbers ahoy, just to ramp up the height of the sin function so its visible.
 					//m_heightMap[index].y = rand() % 9;
-					m_heightMap[index].y = (Pn.noise(i, j, 1.5)) * 25;
+					m_heightMap[index].y += (Pn.noise(i, j, 1.5))*15;
 					m_heightMap[index].z = (float)j;
 				}
 			}
@@ -353,7 +579,7 @@ bool TerrainClass::SmoothTerrain(ID3D11Device* device, bool keydown)
 	{
 		int index;
 		float average;
-		float height = 0.0;
+		//float height = 0.0;
 
 
 		//loop through the terrain and set the hieghts how we want. This is where we generate the terrain
@@ -937,4 +1163,167 @@ void TerrainClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return;
+}
+
+float TerrainClass::RandomRange(float min, float max)
+{
+	if (max < min)
+	{
+		return 0.0f;
+	}
+	return (((rand() % 20000) / 20000.0f) * (max - min) + min);
+}
+
+bool TerrainClass::DiamondSquareAlgorithm(ID3D11Device* device, bool keystroke, float cornerHeight, float randRange, float heightScalar)
+{
+	bool result;
+	std::vector<float> heights;
+	int index, numOfIterations, step;
+
+	// Bool is used to call the function only once
+	if (keystroke && !m_terrainGeneratedToggle)
+	{
+
+
+		// Initialize variables
+		step = (m_terrainHeight - 1);
+		index = numOfIterations = 0;
+		heights.resize(m_terrainHeight * m_terrainWidth);
+
+		for (int i = 0; i < (int)heights.size(); i++)
+		{
+			heights[i] = 0.0f; // Initialize all the heights to 0 for flat terrain
+		}
+
+		// Set the corner heights
+		heights[0] = cornerHeight;		// Bottom Left
+		heights[(m_terrainHeight * (m_terrainHeight - 1))] = cornerHeight;		// Top Left
+		heights[(m_terrainWidth - 1)] = cornerHeight;		// Bottom Right
+		heights[(m_terrainHeight * (m_terrainHeight - 1)) + (m_terrainWidth - 1)] = cornerHeight;		// Top Right
+
+		while (step > 1)
+		{
+			// Diamond Step
+			numOfIterations++;
+			step /= 2;
+			index = 0;
+
+			// Loop through Center points
+			for (int j = step; j < m_terrainHeight - step; j += (step * 2))
+			{
+				for (int i = step; i < m_terrainWidth - step; i += (step * 2))
+				{
+					// Diamond Step
+					//Init the height
+					float averageHeight = 0.0f;
+
+					// Top Left
+					averageHeight += heights[(m_terrainHeight * (j - step)) + (i - step)];
+					// Top Right
+					averageHeight += heights[(m_terrainHeight * (j - step)) + (i + step)];
+					// Bottom Left
+					averageHeight += heights[(m_terrainHeight * (j + step)) + (i - step)];
+					// Bottom Right
+					averageHeight += heights[(m_terrainHeight * (j + step)) + (i + step)];
+
+					// Get current index
+					index = (m_terrainHeight * j) + i;
+
+					float smoothingValue = (float)numOfIterations;
+
+					// set average of four corners
+					heights[index] = (averageHeight / 4) +RandomRange(randRange-5, randRange) / smoothingValue;
+
+					// Square Step
+					// Top
+					if ((j - step) >= 0)
+					{
+						heights[(m_terrainHeight * (j - step)) + i] = GetSquareAverage(heights, i, (j - step), step, randRange, smoothingValue);
+					}
+					// Right
+					if ((i + step) >= 0)
+					{
+						heights[(m_terrainHeight * j) + (i + step)] = GetSquareAverage(heights, (i + step), j, step, randRange, smoothingValue);
+					}
+					// Bottom
+					if ((j + step) >= 0)
+					{
+						heights[(m_terrainHeight * (j + step)) + i] = GetSquareAverage(heights, i, (j + step), step, randRange, smoothingValue);
+					}
+					// Left
+					if ((i - step) >= 0)
+					{
+						heights[(m_terrainHeight * j) + (i - step)] = GetSquareAverage(heights, (i - step), j, step, randRange, smoothingValue);
+					}
+				}
+			}
+		}
+		for (int j = 0; j < m_terrainHeight; j++)
+		{
+			for (int i = 0; i < m_terrainWidth; i++)
+			{
+				index = (m_terrainHeight * j) + i;
+				m_heightMap[index].x = float(i);
+				m_heightMap[index].y += (heights[index])*2;// +(cornerHeight / 2)) * heightScalar;
+				m_heightMap[index].z = float(j);
+			}
+		}
+
+		result = CalculateNormals();
+		if (!result)
+		{
+			return false;
+		}
+
+		// Initialize the vertex and index buffer that hold the geometry for the terrain.
+		result = InitializeBuffers(device);
+		if (!result)
+		{
+			return false;
+		}
+		m_terrainGeneratedToggle = true;
+	}
+	else if (!keystroke && m_terrainGeneratedToggle)
+	{
+		m_terrainGeneratedToggle = false;
+	}
+	heights.clear();
+	return true;
+}
+
+float TerrainClass::GetSquareAverage(std::vector<float> &vector, int i, int j, int step, float randRange, float smoothingVal)
+{
+	// Init variables
+	float averageHeight = 0.0f;
+	int numOfAverages = 0;
+
+	// Top
+	if ((j - step) >= 0)
+	{
+		averageHeight += vector[(m_terrainHeight * (j - step) + i)];
+		numOfAverages++;
+	}
+	// Right
+	if ((i + step) < m_terrainWidth)
+	{
+		averageHeight += vector[(m_terrainHeight * j + (i + step))];
+		numOfAverages++;
+	}
+	// Bottom
+	if ((j + step) < m_terrainHeight)
+	{
+		averageHeight += vector[(m_terrainHeight * (j + step) + i)];
+		numOfAverages++;
+	}
+	// Left
+	if ((i - step) >= 0)
+	{
+		averageHeight += vector[(m_terrainHeight * j + (i - step))];
+		numOfAverages++;
+	}
+
+	float newHeight = (averageHeight / numOfAverages) + RandomRange(-randRange, randRange) / smoothingVal;
+
+	return newHeight;
+
 }
